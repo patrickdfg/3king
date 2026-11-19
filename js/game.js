@@ -162,7 +162,15 @@
     capital:  "assets/images/city_capital.jpg",
     jiangnan: "assets/images/city_jiangnan.jpg",
     jingzhou: "assets/images/city_jingzhou.jpg",
-    shu:      "assets/images/city_shu.jpg"
+    shu:      "assets/images/city_shu.jpg",
+    wan:      "assets/images/city_wan.png",
+    luoyang:  "assets/images/city_luoyang.png",
+    changan:  "assets/images/city_changan.png",
+    ye:       "assets/images/city_ye.png",
+    chaisang: "assets/images/city_chaisang.png",
+    jiangxia: "assets/images/city_jiangxia.png",
+    jiangling:"assets/images/city_jiangling.png",
+    hanzhong: "assets/images/city_hanzhong.png"
   };
 
   const CITY_THEME_MAP = {
@@ -2647,7 +2655,7 @@
     // Draw Regional 3D Isometric City Diorama (unique per region + subtle per-city lighting!)
     const theme = CITY_THEME_MAP[city.id] || 'xinye';
     syncTownNpcsForTheme(theme);
-    const cImg = cityThemeImgs[theme];
+    const cImg = cityThemeImgs[city.id] || cityThemeImgs[theme];
 
     let drawX = 0, drawY = 0, drawW = w, drawH = h;
     if (cImg && cImg.complete && cImg.naturalWidth > 0) {
