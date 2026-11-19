@@ -1448,6 +1448,7 @@
         return;
       }
       b.ended = true;
+      saveState(true);
       renderBattleModal();
       return;
     }
@@ -1814,7 +1815,14 @@
           const attPow = att.troops * (0.85 + Math.random() * 0.3);
           const defPow = def.troops * (0.95 + Math.random() * 0.3);
           if (attPow > defPow * 1.15) {
-            const oldFac = state.factions[def.faction].name;
+            const oldFaction = def.faction;
+            const oldFac = state.factions[oldFaction].name;
+            const otherCity = state.cities.find(c => c.faction === oldFaction && c.id !== def.id);
+            state.officers.filter(o => o.city === def.id && o.faction === oldFaction).forEach(o => {
+              if (otherCity) o.city = otherCity.id;
+              else { o.faction = null; o.loy = 75; }
+            });
+            def.assignments = { agri: null, comm: null, order: null, train: null, recruit: null };
             def.faction = att.faction;
             def.troops = Math.max(1500, Math.round(att.troops * 0.4));
             att.troops = Math.round(att.troops * 0.55);
@@ -1856,11 +1864,11 @@
           } else {
             showToast('금이 부족해 서신만 보냈습니다. [인재] 탭에서 등용하세요.');
           }
-          closeModal(); renderAll();
+          closeModal(); renderAll(); saveState(true);
         });
         $('evSangu2').addEventListener('click', () => {
           addLog('hist', `[역사] 제갈량이 신야 인근에 은거 중입니다. [인재] 탭에서 등용할 수 있습니다.`);
-          closeModal(); renderAll();
+          closeModal(); renderAll(); saveState(true);
         });
         return;
       }
@@ -1883,12 +1891,12 @@
         $('evCh1').addEventListener('click', () => {
           city.gold += 2500; city.order = Math.max(20, city.order - 6);
           playSfx('assign'); addLog('hist', `[이벤트] ${city.name} 호족으로부터 군자금 2,500을 확보했습니다.`);
-          closeModal(); renderAll();
+          closeModal(); renderAll(); saveState(true);
         });
         $('evCh2').addEventListener('click', () => {
           city.order = Math.min(100, city.order + 8); city.pop = Math.min(city.maxPop, city.pop + 6000);
           playSfx('fanfare'); addLog('hist', `[이벤트] 공정한 행정으로 ${city.name} 민심과 인구가 크게 올랐습니다.`);
-          closeModal(); renderAll();
+          closeModal(); renderAll(); saveState(true);
         });
         return;
       } else {
@@ -1907,12 +1915,12 @@
             city.gold -= 1200; city.train = Math.min(100, city.train + 12); city.troops += 800;
             playSfx('assign'); addLog('hist', `[이벤트] 서역 군마 매입으로 ${city.name} 군세가 크게 강화되었습니다!`);
           } else showToast('금이 부족해 거래가 무산되었습니다.');
-          closeModal(); renderAll();
+          closeModal(); renderAll(); saveState(true);
         });
         $('evCh2').addEventListener('click', () => {
           city.gold += 900; city.comm = Math.min(100, city.comm + 3);
           playSfx('assign'); addLog('hist', `[이벤트] 서역 상단 통행세로 금 900과 상업 +3을 얻었습니다.`);
-          closeModal(); renderAll();
+          closeModal(); renderAll(); saveState(true);
         });
         return;
       }
@@ -3305,7 +3313,7 @@
   $('btnStripRight').addEventListener('click', () => { $('officerStrip').scrollLeft += 180; });
 
   // Modal close
-  $('modalClose').addEventListener('click', closeModal);
+  $('modalClose').addEventListener('click', () => { if (!activeBattle) closeModal(); });
   $('modalBackdrop').addEventListener('click', (e) => {
     if (e.target === $('modalBackdrop') && !activeBattle) closeModal();
   });
