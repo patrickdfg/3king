@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>삼국지: 천하쟁패 — 전략 시뮬레이션</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="city-switcher">
+      <button id="btnPrevCity" title="이전 성 (←)">◀</button>
+      <div class="city-name-wrap">
+        <span class="city-name" id="topCityName">신야</span>
+        <span class="city-idx" id="topCityIdx">1/2</span>
+      </div>
+      <button id="btnNextCity" title="다음 성 (→)">▶</button>
+    </div>
+
+    <div class="res-strip">
+      <div class="res-item">
+        <span class="res-icon">🪙</span>
+        <div class="res-meta">
+          <span class="res-label">금</span>
+          <span class="res-val"><span id="resGold">12,480</span><span class="res-delta pos" id="resGoldDelta">+944</span></span>
+        </div>
+      </div>
+      <div class="res-item">
+        <div id="topGovAva" class="mini-ava" style="width:24px;height:24px;pointer-events:none;"></div>
+        <div class="res-meta">
+          <span class="res-label">대표 장수</span>
+          <span class="res-val" id="resGov">유비</span>
+        </div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">👥</span>
+        <div class="res-meta">
+          <span class="res-label">인구</span>
+          <span class="res-val" id="resPop">216,000</span>
+        </div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">🌾</span>
+        <div class="res-meta">
+          <span class="res-label">농업</span>
+          <span class="res-val" id="resAgri">72</span>
+        </div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">🏪</span>
+        <div class="res-meta">
+          <span class="res-label">상업</span>
+          <span class="res-val" id="resComm">68</span>
+        </div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">🛡️</span>
+        <div class="res-meta">
+          <span class="res-label">치안</span>
+          <span class="res-val" id="resOrder">78</span>
+        </div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">⚔️</span>
+        <div class="res-meta">
+          <span class="res-label">병력</span>
+          <span class="res-val" id="resTroops">3,600</span>
+        </div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">🍚</span>
+        <div class="res-meta">
+          <span class="res-label">군량</span>
+          <span class="res-val" id="resFood">76,000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="date-badge" id="dateBadge">❄️ 207년 1월</div>
+      <button class="btn-icon" id="btnBgm" title="배경음악 켜기/끄기">🎵</button>
+      <button class="btn-icon" id="btnSound" title="효과음 켜기/끄기">🔊</button>
+      <button class="btn-icon" id="btnAch" title="업적 & 보물함">🏆</button>
+      <button class="btn-icon" id="btnGuide" title="게임 가이드">❓</button>
+      <button class="btn-icon" id="btnMenu" title="저장 / 불러오기 / 타이틀">⚙️</button>
+      <button class="btn-gold" id="btnMapToggle">🗺️ 지도 (Tab)</button>
+    </div>
+  </header>
+
+  <!-- MAIN BODY -->
+  <div class="main-body">
+    <!-- LEFT COMMAND PANEL -->
+    <aside class="left-panel">
+      <button class="cmd-btn" id="cmdAgri">
+        <span class="cmd-ico">🌾</span>
+        <div class="cmd-text">
+          <span class="cmd-title">농업 개발</span>
+          <span class="cmd-sub" id="subAgri">맡은 장수 없음</span>
+        </div>
+      </button>
+      <button class="cmd-btn" id="cmdComm">
+        <span class="cmd-ico">💰</span>
+        <div class="cmd-text">
+          <span class="cmd-title">상업 투자</span>
+          <span class="cmd-sub" id="subComm">맡은 장수 없음</span>
+        </div>
+      </button>
+      <button class="cmd-btn" id="cmdOrder">
+        <span class="cmd-ico">🛡️</span>
+        <div class="cmd-text">
+          <span class="cmd-title">치안 순찰</span>
+          <span class="cmd-sub" id="subOrder">맡은 장수 없음</span>
+        </div>
+      </button>
+      <button class="cmd-btn" id="cmdTrain">
+        <span class="cmd-ico">⚔️</span>
+        <div class="cmd-text">
+          <span class="cmd-title">훈련</span>
+          <span class="cmd-sub" id="subTrain">맡은 장수 없음</span>
+        </div>
+      </button>
+      <button class="cmd-btn" id="cmdRecruit">
+        <span class="cmd-ico">📯</span>
+        <div class="cmd-text">
+          <span class="cmd-title">징병</span>
+          <span class="cmd-sub" id="subRecruit">맡은 장수 없음</span>
+        </div>
+      </button>
+
+      <div class="idle-box">
+        <div class="idle-title">
+          <span id="idleCountText">쉬는 장수 8명</span>
+          <span style="color:var(--gold);font-size:10px;">클릭하여 배치</span>
+        </div>
+        <div class="idle-avatars" id="idleAvatars"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="cmd-btn" id="cmdMerchant">
+        <span class="cmd-ico">⚖️</span>
+        <div class="cmd-text">
+          <span class="cmd-title">상인</span>
+          <span class="cmd-sub" id="subMerchant">군량 시세 1:10</span>
+        </div>
+      </button>
+      <button class="cmd-btn" id="cmdSalary">
+        <span class="cmd-ico">📜</span>
+        <div class="cmd-text">
+          <span class="cmd-title" id="salaryTitle">급여: 보통</span>
+          <span class="cmd-sub" id="salarySub">장수 충성 유지</span>
+        </div>
+      </button>
+
+      <button class="btn-auto" id="btnAutoAssign">
+        ✨ 추천 맡기기 <span id="autoCount">8</span>
+      </button>
+    </aside>
+
+    <!-- CENTER VIEWPORT -->
+    <main class="center-panel">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="domestic">내정</button>
+        <button class="tab-btn" data-tab="personnel">인재</button>
+        <button class="tab-btn" data-tab="diplomacy">외교</button>
+        <button class="tab-btn" data-tab="military">군사</button>
+        <button class="tab-btn" data-tab="tech">연구</button>
+        <button class="tab-btn" data-tab="info">정보</button>
+      </div>
+
+      <div class="viewport" id="viewport">
+        <!-- Domestic City Canvas -->
+        <div id="viewDomestic" style="width:100%;height:100%;position:relative;">
+          <canvas id="cityCanvas"></canvas>
+          <div class="city-banner" id="cityBanner">
+            <span class="dot-green"></span>
+            <span id="cityBannerText">신야 · 중성</span>
+          </div>
+        </div>
+
+        <!-- World Map Canvas -->
+        <div id="viewMap" style="width:100%;height:100%;position:relative;display:none;">
+          <canvas id="mapCanvas"></canvas>
+          <div class="city-banner">
+            <span class="dot-green" style="background:var(--gold-bright);"></span>
+            <span>천하 지도 · 도시를 클릭해 확인/출진</span>
+          </div>
+          <div class="map-overlay-card" id="mapCard"></div>
+        </div>
+
+        <!-- Sub-tab Panels -->
+        <div id="viewPersonnel" class="tab-content-scroll" style="display:none;"></div>
+        <div id="viewDiplomacy" class="tab-content-scroll" style="display:none;"></div>
+        <div id="viewMilitary" class="tab-content-scroll" style="display:none;"></div>
+        <div id="viewTech" class="tab-content-scroll" style="display:none;"></div>
+        <div id="viewInfo" class="tab-content-scroll" style="display:none;"></div>
+      </div>
+
+      <!-- Officer Strip -->
+      <div class="officer-strip-wrap">
+        <button class="strip-nav" id="btnStripLeft">◀</button>
+        <div class="officer-strip" id="officerStrip"></div>
+        <button class="strip-nav" id="btnStripRight">▶</button>
+      </div>
+    </main>
+
+    <!-- MOBILE PANEL SWITCHER (PC에서는 자동 숨김) -->
+    <div class="mobile-panel-tabs" id="mobilePanelTabs">
+      <button class="m-tab-btn active" data-mpanel="commands">⚔️ 내정 명령</button>
+      <button class="m-tab-btn" data-mpanel="info">📜 군사 조언 · 도시 정보</button>
+    </div>
+
+    <!-- RIGHT INFO PANEL -->
+    <aside class="right-panel">
+      <div class="quest-banner" id="questBanner">
+        <div class="quest-title"><span id="questLabel">🎯 진행 목표</span><span id="questReward" style="color:var(--green);font-size:10px;">보상</span></div>
+        <div class="quest-desc" id="questDesc"></div>
+      </div>
+
+      <div class="r-card">
+        <div class="r-title" id="advisorTitle">📜 군사 조언</div>
+        <div class="advisor-text" id="advisorText"></div>
+      </div>
+
+      <div class="r-card">
+        <div class="r-title">🏯 도시 정보</div>
+        <div class="info-grid">
+          <div class="info-cell">
+            <div class="info-cell-lbl">금 수입</div>
+            <div class="info-cell-val pos" id="infoGoldInc">+751 <span style="font-size:10px;color:var(--text-dim);">/월</span></div>
+          </div>
+          <div class="info-cell">
+            <div class="info-cell-lbl">군량 수입</div>
+            <div class="info-cell-val pos" id="infoFoodInc">+2,652 <span style="font-size:10px;color:var(--text-dim);">/월</span></div>
+          </div>
+          <div class="info-cell">
+            <div class="info-cell-lbl">병력 / 훈련</div>
+            <div class="info-cell-val" id="infoTroops">3,600 <span style="font-size:10px;color:var(--amber);">72%</span></div>
+          </div>
+          <div class="info-cell">
+            <div class="info-cell-lbl">군량</div>
+            <div class="info-cell-val" id="infoFood">76,000</div>
+          </div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-head">
+            <span style="color:var(--text-sub);">인구</span>
+            <span id="infoPopText">216,000 / 30만</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill fill-pop" id="barPop" style="width:72%;"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:7px;border-top:1px solid rgba(140,112,60,0.2);">
+          <div class="off-ava" style="width:34px;height:34px;" id="villagerNpcAva"></div>
+          <div style="font-size:11px;line-height:1.35;color:#cbd5e1;" id="villagerMoodText">백성들이 평온하게 생업에 힘쓰고 있습니다.</div>
+        </div>
+      </div>
+
+      <div class="r-card" style="flex:1;">
+        <div class="r-title">🏗️ 개발 진행</div>
+        <div class="prog-row">
+          <div class="prog-head">
+            <span><span class="prog-lv" id="lvFarm">Lv4</span>농장 <span style="color:var(--green);font-size:10px;" id="bonusFarm">+15%</span></span>
+            <span id="valFarm" style="color:var(--text-sub);">72/100</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill fill-farm" id="barFarm" style="width:72%;"></div></div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-head">
+            <span><span class="prog-lv" id="lvMkt">Lv4</span>시장 <span style="color:var(--gold);font-size:10px;" id="bonusMkt">+15%</span></span>
+            <span id="valMkt" style="color:var(--text-sub);">68/100</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill fill-mkt" id="barMkt" style="width:68%;"></div></div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-head">
+            <span><span class="prog-lv" id="lvBar">Lv3</span>병영 <span style="color:var(--amber);font-size:10px;" id="bonusBar">징병+20%</span></span>
+            <span id="valBar" style="color:var(--text-sub);">40/60</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill fill-bar" id="barBar" style="width:66%;"></div></div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-head">
+            <span>치안</span>
+            <span id="valOrder" style="color:var(--text-sub);">78/100</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill fill-ord" id="barOrder" style="width:78%;"></div></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <footer class="bottom-bar">
+    <div style="font-weight:800;color:var(--gold);font-size:11.5px;align-self:flex-start;padding-top:2px;">보고</div>
+    <div class="log-box" id="logBox"></div>
+    <div class="end-turn-wrap">
+      <div class="hotkey-hint">← → 성 바꾸기 · Tab 지도</div>
+      <button class="btn-end-turn" id="btnEndTurn">▶ 턴 종료</button>
+    </div>
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">알림</div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- COMMERCIAL TITLE SCREEN OVERLAY -->
+<div class="title-overlay" id="titleOverlay">
+  <div class="title-card">
+    <div class="title-logo">삼국지: 천하쟁패</div>
+    <div class="title-sub">207년 난세의 서막 · 군주를 선택해 중원 13개 성을 통일하세요</div>
+    <div class="faction-pick-grid" id="factionPickGrid"></div>
+    <div class="diff-row" id="diffRow">
+      <button class="diff-btn" data-diff="easy">쉬움 (입문)</button>
+      <button class="diff-btn active" data-diff="normal">보통 (표준)</button>
+      <button class="diff-btn" data-diff="hard">어려움 (패왕)</button>
+    </div>
+    <div class="title-actions">
+      <button class="btn-end-turn" id="btnStartNewGame" style="padding:10px 24px;">⚔️ 천하통일 출정</button>
+      <button class="btn-gold" id="btnContinueGame" style="padding:10px 18px;display:none;">📂 이어하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script src="js/game.js"></script>
+</body>
+</html>
