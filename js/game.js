@@ -514,8 +514,14 @@
     { id: 'guild',    branch: '내정', icon: '🪙', name: '대상단 길드',    cost: 2200, desc: '모든 아군 성의 금 수입이 영구적으로 +20% 증가합니다.' },
     { id: 'crossbow', branch: '군사', icon: '🏹', name: '연노병 개량',    cost: 2600, desc: '일제사격 및 궁병 부대의 전투 위력이 +20% 증가합니다.' },
     { id: 'cavalry',  branch: '군사', icon: '🐎', name: '정예 기마대',    cost: 2600, desc: '맹돌격 및 기병 부대의 전투 위력이 +20% 증가합니다.' },
-    { id: 'firebook', branch: '계략', icon: '🔥', name: '화공 전술서',    cost: 2400, desc: '전투 중 화계 성공률과 피해량이 크게 상승합니다.' },
-    { id: 'prestige', branch: '외교', icon: '👑', name: '천하 명성 선포', cost: 2800, desc: '재야 인재 등용률 +25%, 모든 아군 장수 매달 충성 +1.' }
+    { id: 'firebook', branch: '계략', icon: '🔥', name: '화공 전술서',    cost: 2400, desc: '화계 성공 판정 +5, 피해 +25%.' },
+    { id: 'prestige', branch: '외교', icon: '👑', name: '천하 명성 선포', cost: 2800, desc: '재야 인재 등용 확률 +25%p, 모든 아군 장수 매달 충성 +1.' },
+    { id: 'tuntian2', branch: '내정', icon: '🌾', name: '관개 시설 확충', cost: 4200, requires: 'tuntian', desc: '군량 총수입 추가 +10% (기본 수입 기준).' },
+    { id: 'guild2', branch: '내정', icon: '🪙', name: '교역로 개척', cost: 4200, requires: 'guild', desc: '금 총수입 추가 +10% (기본 수입 기준).' },
+    { id: 'crossbow2', branch: '군사', icon: '🏹', name: '궁병 진형 훈련', cost: 4800, requires: 'crossbow', desc: '일제사격 또는 궁병의 피해 추가 +10% (기본 피해 기준).' },
+    { id: 'cavalry2', branch: '군사', icon: '🐎', name: '기병 진형 훈련', cost: 4800, requires: 'cavalry', desc: '맹돌격 또는 기병의 피해 추가 +10% (기본 피해 기준).' },
+    { id: 'firebook2', branch: '계략', icon: '🔥', name: '화공 병법 연구', cost: 4600, requires: 'firebook', desc: '화계 성공 판정 추가 +5, 피해 추가 +10% (기본 피해 기준).' },
+    { id: 'prestige2', branch: '외교', icon: '👑', name: '인재 우대 정책', cost: 5000, requires: 'prestige', desc: '재야 인재 등용 확률 추가 +10%p, 아군 장수 매달 충성 추가 +1.' }
   ];
 
   const ACHIEVEMENT_LIST = [
@@ -666,26 +672,29 @@
     const city = getCurrentCity();
     if (!city) return;
     state.techs = state.techs || {};
-    const doneCnt = Object.keys(state.techs).length;
+    const doneCnt = TECH_TREE.filter(t => state.techs[t.id]).length;
 
     let html = `
       <div class="section-h">
         <span>📜 국가 기술 연구 (${doneCnt} / ${TECH_TREE.length} 완료)</span>
         <span style="font-size:11.5px;color:var(--text-sub);">연구 자금: ${city.name} 금 ${city.gold.toLocaleString()}</span>
       </div>
+      <p style="font-size:11.5px;color:var(--text-sub);">각 연구를 완료하면 같은 분야의 다음 단계가 즉시 열립니다. 현재 마지막 단계는 2단계입니다.</p>
       <div class="grid-cards">
     `;
     TECH_TREE.forEach(t => {
       const done = !!state.techs[t.id];
+      const prerequisite = t.requires && TECH_TREE.find(x => x.id === t.requires);
+      const locked = prerequisite && !state.techs[t.requires];
       html += `
         <div class="tech-card ${done ? 'done' : ''}">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <span style="font-weight:800;font-size:14px;color:${done ? 'var(--green)' : 'var(--gold-bright)'};">${t.icon} ${t.name}</span>
             <span style="font-size:10.5px;color:var(--cyan);background:#0c1528;padding:2px 6px;border-radius:3px;">${t.branch}</span>
           </div>
-          <div style="font-size:11.5px;color:#cbd5e1;line-height:1.45;flex:1;">${t.desc}</div>
-          <button class="btn-sm ${done ? 'btn-success' : ''} act-research" data-tid="${t.id}" ${done ? 'disabled' : ''}>
-            ${done ? '✅ 연구 완료' : `📜 연구 실행 (금 ${t.cost.toLocaleString()})`}
+          <div style="font-size:11.5px;color:#cbd5e1;line-height:1.45;flex:1;">${t.desc}${locked ? `<br>🔒 선행 연구: ${prerequisite.name}` : ''}</div>
+          <button class="btn-sm ${done ? 'btn-success' : ''} act-research" data-tid="${t.id}" ${done || locked ? 'disabled' : ''}>
+            ${done ? '✅ 연구 완료' : locked ? '🔒 선행 연구 필요' : `📜 연구 실행 (금 ${t.cost.toLocaleString()})`}
           </button>
         </div>`;
     });
@@ -695,7 +704,7 @@
     document.querySelectorAll('.act-research').forEach(b => {
       b.addEventListener('click', () => {
         const t = TECH_TREE.find(x => x.id === b.dataset.tid);
-        if (!t || state.techs[t.id]) return;
+        if (!t || state.techs[t.id] || (t.requires && !state.techs[t.requires])) return;
         if (city.gold < t.cost) return showToast(`연구에 금 ${t.cost.toLocaleString()}이 필요합니다.`);
         city.gold -= t.cost;
         state.techs[t.id] = true;
@@ -704,6 +713,7 @@
         showToast(`📜 【${t.name}】 연구 완료!`);
         checkQuestsAndAchievements();
         renderAll();
+        saveState(true);
       });
     });
   }
@@ -716,8 +726,8 @@
     const orderFactor = 0.55 + (city.order / 100) * 0.45;
     const popFactor = Math.max(0.4, city.pop / 200000);
 
-    const guildMult = (city.faction === state.playerFaction && state.techs && state.techs.guild) ? 1.2 : 1.0;
-    const tuntianMult = (city.faction === state.playerFaction && state.techs && state.techs.tuntian) ? 1.2 : 1.0;
+    const guildMult = (city.faction === state.playerFaction && state.techs && state.techs.guild) ? 1.2 + (state.techs.guild2 ? 0.1 : 0) : 1.0;
+    const tuntianMult = (city.faction === state.playerFaction && state.techs && state.techs.tuntian) ? 1.2 + (state.techs.tuntian2 ? 0.1 : 0) : 1.0;
     const goldGross = Math.round((260 + city.comm * 7.2) * mktBonus * orderFactor * popFactor * guildMult);
     const seasonMult = (state.month >= 9 && state.month <= 11) ? 1.4 : 1.0;
     const foodGross = Math.round((850 + city.agri * 24) * farmBonus * orderFactor * popFactor * seasonMult * tuntianMult);
@@ -1498,7 +1508,7 @@
         moraleHit = 9;
         b.log.push(`🏹 하늘을 뒤덮는 일제사격! 아군 피해를 최소화하며 적진을 압박했습니다.`);
       } else if (tactic === 'fire') {
-        const success = (pLead.int + Math.random() * 28) > (eLead.int + 10);
+        const success = (pLead.int + Math.random() * 28 + (state.techs && state.techs.firebook ? 5 : 0) + (state.techs && state.techs.firebook2 ? 5 : 0)) > (eLead.int + 10);
         if (success) {
           pMult = 1.42; eMult = 0.70; moraleHit = 18;
           b.log.push(`🔥 ${pLead.name}의 화계 대성공! 화염이 적 진영을 집어삼켰습니다!`);
@@ -1533,9 +1543,9 @@
       const winterDefMod = (!b.isPlayerAttacking && (state.month === 12 || state.month <= 2)) ? 0.85 : 1.0;
       let techMult = 1.0;
       if (state.techs) {
-        if (state.techs.cavalry && (tactic === 'charge' || pUnit === 'cavalry')) techMult *= 1.2;
-        if (state.techs.crossbow && (tactic === 'volley' || pUnit === 'archer')) techMult *= 1.2;
-        if (state.techs.firebook && tactic === 'fire') techMult *= 1.25;
+        if (state.techs.cavalry && (tactic === 'charge' || pUnit === 'cavalry')) techMult *= 1.2 + (state.techs.cavalry2 ? 0.1 : 0);
+        if (state.techs.crossbow && (tactic === 'volley' || pUnit === 'archer')) techMult *= 1.2 + (state.techs.crossbow2 ? 0.1 : 0);
+        if (state.techs.firebook && tactic === 'fire') techMult *= 1.25 + (state.techs.firebook2 ? 0.1 : 0);
       }
       pMult *= techMult;
       const dmgToEnemy = Math.max(220, Math.round((pTroops * 0.21 + pLead.war * 6.5) * pMult * unitMod * (0.9 + Math.random() * 0.24)));
@@ -1682,6 +1692,7 @@
       getCityOfficers(city.id).forEach(o => {
         if (city.salary === 0 && o.loy > 60) o.loy = Math.max(50, o.loy - 1);
         if (city.salary === 2 && o.loy < 100) o.loy = Math.min(100, o.loy + 2);
+        if (state.techs && state.techs.prestige) o.loy = Math.min(100, o.loy + 1 + (state.techs.prestige2 ? 1 : 0));
       });
 
       // Domestic task execution
@@ -2061,7 +2072,7 @@
         if (city.gold < 400) return showToast('금이 부족합니다.');
         city.gold -= 400;
         const bestChr = Math.max(...getCityOfficers(city.id).map(x => x.chr), 70);
-        const chance = Math.min(0.95, 0.45 + (bestChr - 60) * 0.012);
+        const chance = Math.min(0.95, 0.45 + (bestChr - 60) * 0.012 + (state.techs && state.techs.prestige ? 0.25 : 0) + (state.techs && state.techs.prestige2 ? 0.10 : 0));
         if (Math.random() < chance) {
           o.faction = state.playerFaction;
           o.loy = 95;
