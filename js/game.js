@@ -157,8 +157,46 @@
   }
 
   /* ================= CHARACTER & 3D NPC PORTRAIT RENDERER ================= */
-  const CITY_3D_BG_SRC = "assets/images/city_3d.jpg";
-  const BATTLE_3D_BG_SRC = "assets/images/battle_3d.jpg";
+  const CITY_THEME_SRCS = {
+    xinye:    "assets/images/city_xinye.jpg",
+    capital:  "assets/images/city_capital.jpg",
+    jiangnan: "assets/images/city_jiangnan.jpg",
+    jingzhou: "assets/images/city_jingzhou.jpg",
+    shu:      "assets/images/city_shu.jpg"
+  };
+
+  const CITY_THEME_MAP = {
+    xinye: 'xinye', wan: 'xinye',
+    xuchang: 'capital', luoyang: 'capital', changan: 'capital', ye: 'capital',
+    jianye: 'jiangnan', chaisang: 'jiangnan', jiangxia: 'jiangnan',
+    xiangyang: 'jingzhou', jiangling: 'jingzhou',
+    chengdu: 'shu', hanzhong: 'shu'
+  };
+
+  // Subtle per-city atmospheric tint so every single city feels distinct!
+  const CITY_TINTS = {
+    wan: 'rgba(180, 120, 60, 0.08)',
+    luoyang: 'rgba(235, 130, 50, 0.09)',
+    changan: 'rgba(160, 130, 90, 0.10)',
+    ye: 'rgba(130, 180, 235, 0.10)',
+    chaisang: 'rgba(220, 110, 60, 0.07)',
+    jiangxia: 'rgba(60, 160, 190, 0.08)',
+    jiangling: 'rgba(90, 165, 130, 0.08)',
+    hanzhong: 'rgba(120, 175, 200, 0.10)'
+  };
+
+  const BATTLE_THEME_SRCS = {
+    plains:   "assets/images/battle_plains.jpg",
+    river:    "assets/images/battle_river.jpg",
+    mountain: "assets/images/battle_mountain.jpg"
+  };
+
+  const BATTLE_THEME_MAP = {
+    xinye: 'plains', wan: 'plains', xuchang: 'plains', luoyang: 'plains', ye: 'plains',
+    jianye: 'river', chaisang: 'river', jiangxia: 'river', xiangyang: 'river', jiangling: 'river',
+    chengdu: 'mountain', hanzhong: 'mountain', changan: 'mountain'
+  };
+
   const WORLD_MAP_3D_SRC = "assets/images/world_map_3d.jpg";
 
   const NPC_ARCHETYPES = {
@@ -207,15 +245,19 @@
     zhanglu:    NPC_ARCHETYPES.elder
   };
 
-  const city3DImg = new Image();
-  let city3DLoaded = false;
-  city3DImg.onload = () => { city3DLoaded = true; };
-  city3DImg.src = CITY_3D_BG_SRC;
+  const cityThemeImgs = {};
+  Object.entries(CITY_THEME_SRCS).forEach(([k, u]) => {
+    const im = new Image();
+    im.src = u;
+    cityThemeImgs[k] = im;
+  });
 
-  const battle3DImg = new Image();
-  let battle3DLoaded = false;
-  battle3DImg.onload = () => { battle3DLoaded = true; };
-  battle3DImg.src = BATTLE_3D_BG_SRC;
+  const battleThemeImgs = {};
+  Object.entries(BATTLE_THEME_SRCS).forEach(([k, u]) => {
+    const im = new Image();
+    im.src = u;
+    battleThemeImgs[k] = im;
+  });
 
   const worldMap3DImg = new Image();
   let worldMap3DLoaded = false;
@@ -1158,14 +1200,16 @@
       b.shake *= 0.86;
     }
 
-    // 3D Battlefield Background
-    if (battle3DLoaded && battle3DImg.naturalWidth > 0) {
-      const ir = battle3DImg.naturalWidth / battle3DImg.naturalHeight;
+    // Regional 3D Battlefield Background (Plains / Yangtze River / Sichuan Mountain Pass)
+    const bTheme = BATTLE_THEME_MAP[b.defCityId] || 'plains';
+    const bImg = battleThemeImgs[bTheme];
+    if (bImg && bImg.complete && bImg.naturalWidth > 0) {
+      const ir = bImg.naturalWidth / bImg.naturalHeight;
       const br = w / h;
       let dw = w, dh = h, dx = 0, dy = 0;
       if (br > ir) { dh = w / ir; dy = (h - dh) * 0.5; }
       else { dw = h * ir; dx = (w - dw) * 0.5; }
-      ctx.drawImage(battle3DImg, dx, dy, dw, dh);
+      ctx.drawImage(bImg, dx, dy, dw, dh);
     } else {
       ctx.fillStyle = '#1a1510';
       ctx.fillRect(0, 0, w, h);
@@ -2319,44 +2363,79 @@
     x: Math.random(), y: Math.random(), vx: 0.0007 + Math.random() * 0.001, vy: 0.0012 + Math.random() * 0.0012, s: 2 + Math.random() * 2.5
   }));
 
-  /* Living Moving Town NPCs (normalized diorama coordinates 0..1) */
-  const TOWN_NPC_ROUTES = [
-    // Plaza Villagers (strolling around cherry blossom square)
-    { role: 'villager', color: '#4ade80', hat: '#fef08a', speed: 0.00042, lines: ['태수님 덕분에 살기 좋소!', '벚꽃이 참 곱구나~', '오늘도 평온한 하루요.'], pts: [[0.43,0.44],[0.54,0.39],[0.59,0.50],[0.48,0.57],[0.41,0.50]] },
-    { role: 'villager', color: '#38bdf8', hat: '#e2e8f0', speed: 0.00036, lines: ['장터에 좋은 물건이 많네.', '치안이 좋아 안심이오.', '아이들도 안전하게 뛰노네요.'], pts: [[0.56,0.54],[0.47,0.58],[0.44,0.47],[0.53,0.43]] },
-    { role: 'villager', color: '#a78bfa', hat: '#fde68a', speed: 0.00038, lines: ['태수부에서 좋은 소식이 들리더군!', '풍년이 들었으면 좋겠소.'], pts: [[0.50,0.41],[0.58,0.46],[0.53,0.56],[0.45,0.52]] },
-    // Market Merchants (walking between stalls & gate)
-    { role: 'merchant', color: '#f59e0b', hat: '#78350f', speed: 0.00045, lines: ['비단과 군량 싸게 팝니다!', '어서 오시오, 손님!', '오늘 시세가 아주 좋소!'], pts: [[0.64,0.52],[0.74,0.45],[0.81,0.41],[0.72,0.53]] },
-    { role: 'merchant', color: '#eab308', hat: '#92400e', speed: 0.00040, lines: ['장사가 날로 번창하네!', '서역에서 온 물건이오!'], pts: [[0.78,0.44],[0.69,0.49],[0.63,0.57],[0.74,0.51]] },
-    { role: 'merchant', color: '#fb923c', hat: '#451a03', speed: 0.00043, lines: ['성문을 통해 상단이 들어오네!', '군량 거래는 상인에게!'], pts: [[0.67,0.68],[0.63,0.60],[0.69,0.50],[0.75,0.47]] },
-    // Barracks Patrol Soldiers (marching formation on left training ground)
-    { role: 'soldier',  color: '#ef4444', hat: '#cbd5e1', speed: 0.00052, lines: ['하나! 둘! 훈련에 매진하라!', '성곽 경계 이상 무!', '출진 명령만 기다립니다!'], pts: [[0.21,0.44],[0.34,0.38],[0.38,0.46],[0.26,0.52]] },
-    { role: 'soldier',  color: '#dc2626', hat: '#cbd5e1', speed: 0.00050, lines: ['창을 높이 들어라!', '적군이 오면 단숨에 격퇴한다!'], pts: [[0.35,0.41],[0.24,0.47],[0.29,0.51],[0.37,0.45]] },
-    { role: 'soldier',  color: '#b91c1c', hat: '#94a3b8', speed: 0.00046, lines: ['순찰 중! 이상 없습니다!', '군기가 바짝 들었소!'], pts: [[0.42,0.37],[0.52,0.33],[0.60,0.40],[0.48,0.44]] },
-    // Wheat Field Farmers (working outside bottom-left wall)
-    { role: 'farmer',   color: '#84cc16', hat: '#fde047', speed: 0.00032, lines: ['올해 밀 농사가 대풍이오!', '군량 걱정은 마시게!', '땀 흘린 보람이 있구나.'], pts: [[0.14,0.67],[0.26,0.74],[0.34,0.82],[0.22,0.78]] },
-    { role: 'farmer',   color: '#65a30d', hat: '#fef08a', speed: 0.00034, lines: ['곡식이 황금빛으로 익었소!', '수확철이 기대되는군!'], pts: [[0.29,0.76],[0.18,0.69],[0.15,0.74],[0.26,0.82]] },
-    // Bridge Travelers (crossing the wooden bridge over the river)
-    { role: 'traveler', color: '#2dd4bf', hat: '#f8fafc', speed: 0.00040, lines: ['다리를 건너 신야성으로 가는 길이오.', '성곽이 참 웅장하군!'], pts: [[0.84,0.84],[0.75,0.76],[0.67,0.69],[0.76,0.77]] },
-    { role: 'traveler', color: '#60a5fa', hat: '#e2e8f0', speed: 0.00037, lines: ['소문을 듣고 이주해 왔소!', '물 맑고 살기 좋은 고장이네.'], pts: [[0.66,0.70],[0.74,0.77],[0.82,0.83],[0.72,0.75]] }
-  ];
+  /* Per-Theme Strictly Walkable Courtyard / Road Zones (Zero Wall/Roof/River Clipping!) */
+  const CITY_THEME_BADGES = {
+    xinye:    { bar: [0.27, 0.36], mkt: [0.75, 0.41], ord: [0.51, 0.49], farm: [0.24, 0.74] },
+    capital:  { bar: [0.31, 0.33], mkt: [0.68, 0.54], ord: [0.48, 0.48], farm: [0.22, 0.74] },
+    jiangnan: { bar: [0.19, 0.34], mkt: [0.71, 0.54], ord: [0.54, 0.43], farm: [0.21, 0.77] },
+    jingzhou: { bar: [0.37, 0.36], mkt: [0.64, 0.43], ord: [0.48, 0.48], farm: [0.18, 0.72] },
+    shu:      { bar: [0.23, 0.46], mkt: [0.70, 0.53], ord: [0.53, 0.52], farm: [0.28, 0.80] }
+  };
 
-  let townNpcs = TOWN_NPC_ROUTES.map((r, idx) => ({
-    ...r,
-    id: idx,
-    wp: idx % r.pts.length,
-    x: r.pts[idx % r.pts.length][0],
-    y: r.pts[idx % r.pts.length][1],
-    facing: 1,
-    pause: 0,
-    bubble: '',
-    bubbleTimer: 0,
-    screenX: 0,
-    screenY: 0
-  }));
+  const CITY_THEME_ROUTES = {
+    xinye: [
+      { role: 'villager', speed: 0.00018, lines: ['태수님 덕분에 살기 좋소!', '벚꽃 광장이 참 곱구나~'], pts: [[0.46,0.52],[0.52,0.56],[0.55,0.51],[0.49,0.48]] },
+      { role: 'villager', speed: 0.00016, lines: ['치안이 좋아 안심이오.', '오늘도 평온한 하루요.'], pts: [[0.56,0.53],[0.51,0.57],[0.47,0.54],[0.52,0.50]] },
+      { role: 'merchant', speed: 0.00019, lines: ['장터에 좋은 물건이 많소!', '군량 시세가 좋구려!'], pts: [[0.68,0.49],[0.75,0.45],[0.77,0.48],[0.70,0.52]] },
+      { role: 'soldier',  speed: 0.00022, lines: ['하나! 둘! 훈련에 매진하라!', '성곽 경계 이상 무!'], pts: [[0.23,0.46],[0.31,0.42],[0.33,0.46],[0.25,0.49]] },
+      { role: 'soldier',  speed: 0.00020, lines: ['출진 명령만 기다립니다!', '군기가 바짝 들었소!'], pts: [[0.32,0.44],[0.25,0.48],[0.28,0.50],[0.34,0.46]] },
+      { role: 'farmer',   speed: 0.00015, lines: ['올해 밀 농사가 대풍이오!', '군량 걱정은 마시게!'], pts: [[0.18,0.71],[0.27,0.76],[0.24,0.79],[0.15,0.74]] }
+    ],
+    capital: [
+      { role: 'villager', speed: 0.00018, lines: ['황성의 위용이 대단하구나!', '대로가 넓어 다니기 좋소.'], pts: [[0.42,0.53],[0.50,0.47],[0.53,0.51],[0.45,0.57]] },
+      { role: 'villager', speed: 0.00016, lines: ['태수부에서 좋은 정치가 펼쳐지네.', '천하의 중심답구려!'], pts: [[0.47,0.58],[0.54,0.52],[0.51,0.49],[0.44,0.55]] },
+      { role: 'merchant', speed: 0.00019, lines: ['도성 장터에 손님이 구름 같소!', '비단과 차를 구경하시오!'], pts: [[0.62,0.62],[0.69,0.58],[0.71,0.62],[0.64,0.65]] },
+      { role: 'soldier',  speed: 0.00022, lines: ['도성 수비 이상 무!', '정예 병사들 훈련 개시!'], pts: [[0.28,0.40],[0.35,0.36],[0.37,0.39],[0.30,0.43]] },
+      { role: 'farmer',   speed: 0.00015, lines: ['중원의 황금 들녘이 풍요롭소!', '올가을 풍년일세!'], pts: [[0.19,0.73],[0.27,0.78],[0.24,0.81],[0.16,0.76]] }
+    ],
+    jiangnan: [
+      { role: 'villager', speed: 0.00017, lines: ['강남 물길이 참 아름답소!', '돌다리에 바람이 시원하네.'], pts: [[0.50,0.47],[0.57,0.44],[0.59,0.48],[0.52,0.51]] },
+      { role: 'merchant', speed: 0.00019, lines: ['장강 수운으로 물자가 넘쳐나오!', '나루터 장터로 오시오!'], pts: [[0.66,0.64],[0.73,0.60],[0.75,0.63],[0.68,0.67]] },
+      { role: 'merchant', speed: 0.00018, lines: ['오나라 수군과 상선이 든든하구려!', '비단 시세가 좋소!'], pts: [[0.53,0.50],[0.58,0.47],[0.55,0.44],[0.50,0.48]] },
+      { role: 'soldier',  speed: 0.00021, lines: ['강동 수군 출격 준비 완료!', '성곽 경계 이상 무!'], pts: [[0.16,0.42],[0.22,0.39],[0.24,0.42],[0.18,0.45]] },
+      { role: 'farmer',   speed: 0.00015, lines: ['강남 논농사가 잘 익었소!', '풍년이로다!'], pts: [[0.18,0.77],[0.24,0.81],[0.21,0.83],[0.15,0.79]] }
+    ],
+    jingzhou: [
+      { role: 'villager', speed: 0.00017, lines: ['해자가 깊어 적도 못 넘보겠소!', '형주 백성들이 평안하오.'], pts: [[0.43,0.50],[0.51,0.46],[0.54,0.50],[0.46,0.54]] },
+      { role: 'villager', speed: 0.00016, lines: ['성내 광장이 참 깔끔하구려.', '오늘도 무사태평이오.'], pts: [[0.46,0.53],[0.53,0.49],[0.50,0.46],[0.44,0.50]] },
+      { role: 'merchant', speed: 0.00019, lines: ['형주 요충지라 장사가 잘 되오!', '군량과 물자 거래하시오!'], pts: [[0.60,0.48],[0.66,0.45],[0.68,0.48],[0.62,0.51]] },
+      { role: 'soldier',  speed: 0.00022, lines: ['철벽 수성! 한 놈도 못 들어온다!', '훈련 이상 무!'], pts: [[0.34,0.43],[0.40,0.40],[0.42,0.43],[0.36,0.46]] },
+      { role: 'farmer',   speed: 0.00015, lines: ['성 밖 밭이 기름지구나!', '곡식이 쑥쑥 자라네!'], pts: [[0.15,0.71],[0.22,0.76],[0.19,0.79],[0.12,0.74]] }
+    ],
+    shu: [
+      { role: 'villager', speed: 0.00017, lines: ['촉산의 절경과 천부지국이로다!', '등불 정자가 참 멋지오.'], pts: [[0.46,0.59],[0.53,0.56],[0.56,0.59],[0.49,0.62]] },
+      { role: 'villager', speed: 0.00016, lines: ['산세가 험해 도적이 얼씬도 못하오.', '살기 좋은 고장이네.'], pts: [[0.58,0.52],[0.64,0.49],[0.66,0.52],[0.60,0.55]] },
+      { role: 'merchant', speed: 0.00019, lines: ['촉나라 비단과 차가 천하제일이오!', '어서 구경하시오!'], pts: [[0.66,0.59],[0.72,0.56],[0.74,0.59],[0.68,0.62]] },
+      { role: 'soldier',  speed: 0.00022, lines: ['촉산 관문 수비 철저!', '정예병 훈련 중!'], pts: [[0.20,0.54],[0.27,0.51],[0.29,0.54],[0.22,0.57]] },
+      { role: 'farmer',   speed: 0.00015, lines: ['계단식 논에 황금 벼가 가득하오!', '풍년일세!'], pts: [[0.25,0.79],[0.33,0.83],[0.30,0.86],[0.22,0.82]] }
+    ]
+  };
+
+  let currentNpcTheme = null;
+  let townNpcs = [];
+
+  function syncTownNpcsForTheme(theme) {
+    if (currentNpcTheme === theme && townNpcs.length > 0) return;
+    currentNpcTheme = theme;
+    const routes = CITY_THEME_ROUTES[theme] || CITY_THEME_ROUTES.xinye;
+    townNpcs = routes.map((r, idx) => ({
+      ...r,
+      id: idx,
+      wp: idx % r.pts.length,
+      x: r.pts[idx % r.pts.length][0],
+      y: r.pts[idx % r.pts.length][1],
+      facing: 1,
+      pause: 15 + idx * 12,
+      bubble: '',
+      bubbleTimer: 0,
+      screenX: 0,
+      screenY: 0
+    }));
+  }
 
   function updateAndDrawTownNpcs(ctx, pt, scale) {
-    const npcScale = Math.max(0.75, Math.min(1.25, scale));
+    // Realistic miniature diorama scale (small, proportional to buildings & plazas!)
+    const npcScale = Math.max(0.65, Math.min(1.1, scale));
     townNpcs.forEach(npc => {
       if (npc.pause > 0) {
         npc.pause--;
@@ -2365,9 +2444,9 @@
         const dx = target[0] - npc.x;
         const dy = target[1] - npc.y;
         const dist = Math.hypot(dx, dy);
-        if (dist < 0.004) {
+        if (dist < 0.003) {
           npc.wp = (npc.wp + 1) % npc.pts.length;
-          npc.pause = 20 + Math.floor(Math.random() * 45);
+          npc.pause = 45 + Math.floor(Math.random() * 65);
         } else {
           npc.x += (dx / dist) * npc.speed;
           npc.y += (dy / dist) * npc.speed;
@@ -2376,9 +2455,9 @@
       }
 
       if (npc.bubbleTimer > 0) npc.bubbleTimer--;
-      else if (Math.random() < 0.0006) {
+      else if (Math.random() < 0.00045) {
         npc.bubble = npc.lines[Math.floor(Math.random() * npc.lines.length)];
-        npc.bubbleTimer = 150;
+        npc.bubbleTimer = 140;
       }
 
       const [sx, sy] = pt(npc.x, npc.y);
@@ -2386,30 +2465,30 @@
       npc.screenY = sy;
 
       const walking = npc.pause === 0;
-      const bob = walking ? Math.abs(Math.sin(animTick * 0.22 + npc.id)) * 2.6 * npcScale : 0;
+      const bob = walking ? Math.abs(Math.sin(animTick * 0.16 + npc.id)) * 1.3 * npcScale : 0;
 
-      // Ground drop shadow (3D grounding)
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+      // Crisp miniature ground shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.36)';
       ctx.beginPath();
-      ctx.ellipse(sx, sy + 2 * npcScale, 9.5 * npcScale, 4.2 * npcScale, 0, 0, Math.PI * 2);
+      ctx.ellipse(sx, sy + 1 * npcScale, 4.8 * npcScale, 2.2 * npcScale, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Render crisp transparent 3D modeled character sprite with walk-bounce & directional flip
+      // Miniature 3D figurine sprite (17~20px proportional to diorama courtyards!)
       const spImg = npcSprites[npc.role];
-      const spriteH = (npc.role === 'soldier' ? 38 : 33) * npcScale;
+      const spriteH = (npc.role === 'soldier' ? 21 : 18) * npcScale;
       if (spImg && spImg.complete && spImg.naturalWidth > 0) {
         const spriteW = spriteH * (spImg.naturalWidth / spImg.naturalHeight);
-        const tilt = walking ? Math.sin(animTick * 0.22 + npc.id) * 0.065 : 0;
+        const tilt = walking ? Math.sin(animTick * 0.16 + npc.id) * 0.035 : 0;
         const flipX = (npc.facing === (NPC_SPRITE_DEFAULT_DIR[npc.role] || 1)) ? 1 : -1;
         ctx.save();
         ctx.translate(sx, sy - bob);
         ctx.rotate(tilt);
         ctx.scale(flipX, 1);
-        ctx.drawImage(spImg, -spriteW / 2, -spriteH + 3 * npcScale, spriteW, spriteH);
+        ctx.drawImage(spImg, -spriteW / 2, -spriteH + 2 * npcScale, spriteW, spriteH);
         ctx.restore();
       }
 
-      // Speech bubble when active
+      // Speech bubble
       if (npc.bubbleTimer > 0 && npc.bubble) {
         ctx.save();
         ctx.font = 'bold 10.5px "Malgun Gothic", sans-serif';
@@ -2417,7 +2496,7 @@
         const bw = tw + 12;
         const bh = 18;
         const bx = sx - bw / 2;
-        const by = sy - 54 * npcScale - bob;
+        const by = sy - 34 * npcScale - bob;
         ctx.globalAlpha = Math.min(1, npc.bubbleTimer / 25);
         ctx.fillStyle = 'rgba(13, 21, 39, 0.92)';
         ctx.strokeStyle = '#e5be67';
@@ -2546,10 +2625,14 @@
     ctx.fillStyle = '#0d1729';
     ctx.fillRect(0, 0, w, h);
 
-    // Draw 3D Isometric City Diorama using cover projection so buildings align cleanly at any aspect ratio
+    // Draw Regional 3D Isometric City Diorama (unique per region + subtle per-city lighting!)
+    const theme = CITY_THEME_MAP[city.id] || 'xinye';
+    syncTownNpcsForTheme(theme);
+    const cImg = cityThemeImgs[theme];
+
     let drawX = 0, drawY = 0, drawW = w, drawH = h;
-    if (city3DLoaded && city3DImg.naturalWidth > 0) {
-      const imgRatio = city3DImg.naturalWidth / city3DImg.naturalHeight;
+    if (cImg && cImg.complete && cImg.naturalWidth > 0) {
+      const imgRatio = cImg.naturalWidth / cImg.naturalHeight;
       const boxRatio = w / h;
       if (boxRatio > imgRatio) {
         drawW = w;
@@ -2562,12 +2645,16 @@
         drawX = (w - drawW) * 0.5;
         drawY = 0;
       }
-      ctx.drawImage(city3DImg, drawX, drawY, drawW, drawH);
+      ctx.drawImage(cImg, drawX, drawY, drawW, drawH);
 
-      // Subtle cinematic vignette around edges to blend with dark navy strategy UI
+      if (CITY_TINTS[city.id]) {
+        ctx.fillStyle = CITY_TINTS[city.id];
+        ctx.fillRect(0, 0, w, h);
+      }
+
       const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, Math.min(w, h) * 0.32, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
       vig.addColorStop(0, 'rgba(9, 14, 26, 0)');
-      vig.addColorStop(1, 'rgba(9, 14, 26, 0.32)');
+      vig.addColorStop(1, 'rgba(9, 14, 26, 0.30)');
       ctx.fillStyle = vig;
       ctx.fillRect(0, 0, w, h);
     }
@@ -2602,11 +2689,12 @@
       ctx.fill();
     });
 
-    // Clickable Floating Building Badges aligned directly over the 3D Diorama landmarks
-    const [bx, by] = pt(0.27, 0.36);
-    const [mx, my] = pt(0.75, 0.41);
-    const [ox, oy] = pt(0.51, 0.49);
-    const [fx, fy] = pt(0.24, 0.74);
+    // Clickable Floating Building Badges aligned to this city theme's exact 3D landmarks
+    const bPos = CITY_THEME_BADGES[theme] || CITY_THEME_BADGES.xinye;
+    const [bx, by] = pt(bPos.bar[0], bPos.bar[1]);
+    const [mx, my] = pt(bPos.mkt[0], bPos.mkt[1]);
+    const [ox, oy] = pt(bPos.ord[0], bPos.ord[1]);
+    const [fx, fy] = pt(bPos.farm[0], bPos.farm[1]);
 
     drawBadge(ctx, bx, by, `⚔️ 병영 Lv${econ.barLv}`, '#fb923c', 'train');
     drawBadge(ctx, mx, my, `🏪 시장 Lv${econ.mktLv}`, '#facc15', 'comm');
