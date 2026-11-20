@@ -2059,11 +2059,10 @@
         showToast(`🌟 재야 명장 ${freeHere[0].name}의 거처를 확인했습니다! 아래에서 등용하세요.`);
         addLog('per', `[인재] ${city.name} 탐색 중 ${freeHere[0].name}의 소재를 파악했습니다.`);
       } else {
-        const bonusGold = 150 + Math.floor(Math.random() * 250);
-        city.gold += bonusGold;
-        showToast(`재야 인재는 없었으나 지역 호족의 기부로 금 ${bonusGold}을 얻었습니다.`);
+        showToast('재야 인재를 찾지 못했습니다. 탐색 비용 200금이 소모되었습니다.');
       }
       renderAll();
+      saveState(true);
     });
 
     document.querySelectorAll('.act-reward').forEach(b => {
