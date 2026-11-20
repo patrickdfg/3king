@@ -529,7 +529,25 @@
     { id: 'crossbow2', branch: '군사', icon: '🏹', name: '궁병 진형 훈련', cost: 4800, requires: 'crossbow', desc: '일제사격 또는 궁병의 피해 추가 +10% (기본 피해 기준).' },
     { id: 'cavalry2', branch: '군사', icon: '🐎', name: '기병 진형 훈련', cost: 4800, requires: 'cavalry', desc: '맹돌격 또는 기병의 피해 추가 +10% (기본 피해 기준).' },
     { id: 'firebook2', branch: '계략', icon: '🔥', name: '화공 병법 연구', cost: 4600, requires: 'firebook', desc: '화계 성공 판정 추가 +5, 피해 추가 +10% (기본 피해 기준).' },
-    { id: 'prestige2', branch: '외교', icon: '👑', name: '인재 우대 정책', cost: 5000, requires: 'prestige', desc: '재야 인재 등용 확률 추가 +10%p, 아군 장수 매달 충성 추가 +1.' }
+    { id: 'prestige2', branch: '외교', icon: '👑', name: '인재 우대 정책', cost: 5000, requires: 'prestige', desc: '재야 인재 등용 확률 추가 +10%p, 아군 장수 매달 충성 추가 +1.' },
+    { id: 'tuntian3', branch: '내정', icon: '🌾', name: '수리 시설 확장', cost: 6500, requires: 'tuntian2', desc: '아군 군량 총수입 추가 +5% (기본 수입 기준).' },
+    { id: 'guild3', branch: '내정', icon: '🪙', name: '상업 조합 육성', cost: 6500, requires: 'guild2', desc: '아군 금 총수입 추가 +5% (기본 수입 기준).' },
+    { id: 'crossbow3', branch: '군사', icon: '🏹', name: '궁병 숙련', cost: 6500, requires: 'crossbow2', desc: '일제사격 또는 궁병 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'cavalry3', branch: '군사', icon: '🐎', name: '기마 숙련', cost: 6500, requires: 'cavalry2', desc: '맹돌격 또는 기병 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'firebook3', branch: '계략', icon: '🔥', name: '화공 숙련', cost: 6500, requires: 'firebook2', desc: '화계 성공 판정 추가 +2, 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'prestige3', branch: '외교', icon: '👑', name: '군수 행정', cost: 6500, requires: 'prestige2', desc: '아군 성의 병력 유지 군량 추가 5% 감소 (기본 소모 기준).' },
+    { id: 'tuntian4', branch: '내정', icon: '🌾', name: '풍년 농법', cost: 9500, requires: 'tuntian3', minCities: 6, desc: '아군 군량 총수입 추가 +5% (기본 수입 기준).' },
+    { id: 'guild4', branch: '내정', icon: '🪙', name: '광역 교역망', cost: 9500, requires: 'guild3', minCities: 6, desc: '아군 금 총수입 추가 +5% (기본 수입 기준).' },
+    { id: 'crossbow4', branch: '군사', icon: '🏹', name: '연노 진법', cost: 9500, requires: 'crossbow3', minCities: 6, desc: '일제사격 또는 궁병 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'cavalry4', branch: '군사', icon: '🐎', name: '기병 진법', cost: 9500, requires: 'cavalry3', minCities: 6, desc: '맹돌격 또는 기병 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'firebook4', branch: '계략', icon: '🔥', name: '화공 진법', cost: 9500, requires: 'firebook3', minCities: 6, desc: '화계 성공 판정 추가 +2, 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'prestige4', branch: '외교', icon: '👑', name: '군량 운송 개선', cost: 9500, requires: 'prestige3', minCities: 6, desc: '아군 성의 병력 유지 군량 추가 5% 감소 (기본 소모 기준).' },
+    { id: 'tuntian5', branch: '내정', icon: '🌾', name: '천하 곡창', cost: 14000, requires: 'tuntian4', minCities: 9, desc: '아군 군량 총수입 추가 +5% (기본 수입 기준).' },
+    { id: 'guild5', branch: '내정', icon: '🪙', name: '천하 교역', cost: 14000, requires: 'guild4', minCities: 9, desc: '아군 금 총수입 추가 +5% (기본 수입 기준).' },
+    { id: 'crossbow5', branch: '군사', icon: '🏹', name: '신기전술', cost: 14000, requires: 'crossbow4', minCities: 9, desc: '일제사격 또는 궁병 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'cavalry5', branch: '군사', icon: '🐎', name: '철기 전술', cost: 14000, requires: 'cavalry4', minCities: 9, desc: '맹돌격 또는 기병 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'firebook5', branch: '계략', icon: '🔥', name: '화공 비책', cost: 14000, requires: 'firebook4', minCities: 9, desc: '화계 성공 판정 추가 +2, 피해 추가 +5% (기본 피해 기준).' },
+    { id: 'prestige5', branch: '외교', icon: '👑', name: '천하 보급망', cost: 14000, requires: 'prestige4', minCities: 9, desc: '아군 성의 병력 유지 군량 추가 5% 감소 (기본 소모 기준).' }
   ];
 
   const ACHIEVEMENT_LIST = [
@@ -687,22 +705,25 @@
         <span>📜 국가 기술 연구 (${doneCnt} / ${TECH_TREE.length} 완료)</span>
         <span style="font-size:11.5px;color:var(--text-sub);">연구 자금: ${city.name} 금 ${city.gold.toLocaleString()}</span>
       </div>
-      <p style="font-size:11.5px;color:var(--text-sub);">각 연구를 완료하면 같은 분야의 다음 단계가 즉시 열립니다. 현재 마지막 단계는 2단계입니다.</p>
+      <p style="font-size:11.5px;color:var(--text-sub);">이전 연구를 완료하면 다음 단계가 열립니다. 4단계는 성 6개, 5단계는 성 9개가 필요합니다.</p>
       <div class="grid-cards">
     `;
     TECH_TREE.forEach(t => {
       const done = !!state.techs[t.id];
       const prerequisite = t.requires && TECH_TREE.find(x => x.id === t.requires);
-      const locked = prerequisite && !state.techs[t.requires];
+      const needsResearch = prerequisite && !state.techs[t.requires];
+      const needsCities = t.minCities && getPlayerCities().length < t.minCities;
+      const locked = needsResearch || needsCities;
+      const level = t.id.match(/[2-5]$/)?.[0] || '1';
       html += `
         <div class="tech-card ${done ? 'done' : ''}">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <span style="font-weight:800;font-size:14px;color:${done ? 'var(--green)' : 'var(--gold-bright)'};">${t.icon} ${t.name}</span>
-            <span style="font-size:10.5px;color:var(--cyan);background:#0c1528;padding:2px 6px;border-radius:3px;">${t.branch}</span>
+            <span style="font-size:10.5px;color:var(--cyan);background:#0c1528;padding:2px 6px;border-radius:3px;">${t.branch} · ${level}단계</span>
           </div>
-          <div style="font-size:11.5px;color:#cbd5e1;line-height:1.45;flex:1;">${t.desc}${locked ? `<br>🔒 선행 연구: ${prerequisite.name}` : ''}</div>
+          <div style="font-size:11.5px;color:#cbd5e1;line-height:1.45;flex:1;">${t.desc}${!done && needsResearch ? `<br>🔒 선행 연구: ${prerequisite.name}` : ''}${!done && needsCities ? `<br>🔒 아군 성 ${t.minCities}개 필요 (현재 ${getPlayerCities().length}개)` : ''}</div>
           <button class="btn-sm ${done ? 'btn-success' : ''} act-research" data-tid="${t.id}" ${done || locked ? 'disabled' : ''}>
-            ${done ? '✅ 연구 완료' : locked ? '🔒 선행 연구 필요' : `📜 연구 실행 (금 ${t.cost.toLocaleString()})`}
+            ${done ? '✅ 연구 완료' : locked ? '🔒 조건 미충족' : `📜 연구 실행 (금 ${t.cost.toLocaleString()})`}
           </button>
         </div>`;
     });
@@ -712,7 +733,7 @@
     document.querySelectorAll('.act-research').forEach(b => {
       b.addEventListener('click', () => {
         const t = TECH_TREE.find(x => x.id === b.dataset.tid);
-        if (!t || state.techs[t.id] || (t.requires && !state.techs[t.requires])) return;
+        if (!t || state.techs[t.id] || (t.requires && !state.techs[t.requires]) || (t.minCities && getPlayerCities().length < t.minCities)) return;
         if (city.gold < t.cost) return showToast(`연구에 금 ${t.cost.toLocaleString()}이 필요합니다.`);
         city.gold -= t.cost;
         state.techs[t.id] = true;
@@ -726,6 +747,10 @@
     });
   }
 
+  function advancedTechCount(id) {
+    return state.techs ? [3, 4, 5].filter(level => state.techs[id + level]).length : 0;
+  }
+
   function calcMonthlyEconomy(city) {
     const farmLv = getLevel(city.agri, 100);
     const mktLv = getLevel(city.comm, 100);
@@ -734,8 +759,8 @@
     const orderFactor = 0.55 + (city.order / 100) * 0.45;
     const popFactor = Math.max(0.4, city.pop / 200000);
 
-    const guildMult = (city.faction === state.playerFaction && state.techs && state.techs.guild) ? 1.2 + (state.techs.guild2 ? 0.1 : 0) : 1.0;
-    const tuntianMult = (city.faction === state.playerFaction && state.techs && state.techs.tuntian) ? 1.2 + (state.techs.tuntian2 ? 0.1 : 0) : 1.0;
+    const guildMult = (city.faction === state.playerFaction && state.techs && state.techs.guild) ? 1.2 + (state.techs.guild2 ? 0.1 : 0) + advancedTechCount('guild') * 0.05 : 1.0;
+    const tuntianMult = (city.faction === state.playerFaction && state.techs && state.techs.tuntian) ? 1.2 + (state.techs.tuntian2 ? 0.1 : 0) + advancedTechCount('tuntian') * 0.05 : 1.0;
     const goldGross = Math.round((260 + city.comm * 7.2) * mktBonus * orderFactor * popFactor * guildMult);
     const seasonMult = (state.month >= 9 && state.month <= 11) ? 1.4 : 1.0;
     const foodGross = Math.round((850 + city.agri * 24) * farmBonus * orderFactor * popFactor * seasonMult * tuntianMult);
@@ -744,7 +769,7 @@
     const salMult = city.salary === 0 ? 35 : city.salary === 1 ? 60 : 95;
     const salaryCost = offs.length * salMult;
     const troopGoldCost = Math.round(city.troops * 0.04);
-    const troopFoodCost = Math.round(city.troops * 0.22);
+    const troopFoodCost = Math.round(city.troops * 0.22 * (city.faction === state.playerFaction ? 1 - advancedTechCount('prestige') * 0.05 : 1));
 
     return {
       goldNet: goldGross - salaryCost - troopGoldCost,
@@ -1516,7 +1541,7 @@
         moraleHit = 9;
         b.log.push(`🏹 하늘을 뒤덮는 일제사격! 아군 피해를 최소화하며 적진을 압박했습니다.`);
       } else if (tactic === 'fire') {
-        const success = (pLead.int + Math.random() * 28 + (state.techs && state.techs.firebook ? 5 : 0) + (state.techs && state.techs.firebook2 ? 5 : 0)) > (eLead.int + 10);
+        const success = (pLead.int + Math.random() * 28 + (state.techs && state.techs.firebook ? 5 : 0) + (state.techs && state.techs.firebook2 ? 5 : 0) + advancedTechCount('firebook') * 2) > (eLead.int + 10);
         if (success) {
           pMult = 1.42; eMult = 0.70; moraleHit = 18;
           b.log.push(`🔥 ${pLead.name}의 화계 대성공! 화염이 적 진영을 집어삼켰습니다!`);
@@ -1551,9 +1576,9 @@
       const winterDefMod = (!b.isPlayerAttacking && (state.month === 12 || state.month <= 2)) ? 0.85 : 1.0;
       let techMult = 1.0;
       if (state.techs) {
-        if (state.techs.cavalry && (tactic === 'charge' || pUnit === 'cavalry')) techMult *= 1.2 + (state.techs.cavalry2 ? 0.1 : 0);
-        if (state.techs.crossbow && (tactic === 'volley' || pUnit === 'archer')) techMult *= 1.2 + (state.techs.crossbow2 ? 0.1 : 0);
-        if (state.techs.firebook && tactic === 'fire') techMult *= 1.25 + (state.techs.firebook2 ? 0.1 : 0);
+        if (state.techs.cavalry && (tactic === 'charge' || pUnit === 'cavalry')) techMult *= 1.2 + (state.techs.cavalry2 ? 0.1 : 0) + advancedTechCount('cavalry') * 0.05;
+        if (state.techs.crossbow && (tactic === 'volley' || pUnit === 'archer')) techMult *= 1.2 + (state.techs.crossbow2 ? 0.1 : 0) + advancedTechCount('crossbow') * 0.05;
+        if (state.techs.firebook && tactic === 'fire') techMult *= 1.25 + (state.techs.firebook2 ? 0.1 : 0) + advancedTechCount('firebook') * 0.05;
       }
       pMult *= techMult;
       const dmgToEnemy = Math.max(220, Math.round((pTroops * 0.21 + pLead.war * 6.5) * pMult * unitMod * (0.9 + Math.random() * 0.24)));
